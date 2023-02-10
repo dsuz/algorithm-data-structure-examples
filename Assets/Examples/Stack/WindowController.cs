@@ -77,7 +77,7 @@ class MenuSfx : IObserver<BaseEventData>
         {
             var eventData = (PointerEventData)value;
         }
-        catch (InvalidCastException e)
+        catch (InvalidCastException)
         {
             _audioSource.clip = _audioClip;
             _audioSource.Play();
