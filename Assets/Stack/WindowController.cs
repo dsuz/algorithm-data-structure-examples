@@ -18,6 +18,8 @@ public class WindowController : MonoBehaviour
     [SerializeField] AudioSource _audio;
     /// <summary>操作した時に鳴る音</summary>
     [SerializeField] AudioClip _selectSoundEffect;
+    /// <summary>操作した時に鳴る音</summary>
+    [SerializeField] AudioClip _clickSoundEffect;
     /// <summary>最後にクリックされたボタン</summary>
     Button _lastClickedButton;
 
@@ -33,6 +35,8 @@ public class WindowController : MonoBehaviour
 
             button.onClick.AddListener(() =>
             {
+                _audio.clip = _clickSoundEffect;
+                _audio.Play();
                 _lastClickedButton = button;
                 WindowManager.Instance.CreateNewWindow(button.transform.position);
             });
@@ -64,12 +68,20 @@ class MenuSfx : IObserver<BaseEventData>
     {
         _audioSource = audioSource;
         _audioClip = audioClip;
-        _audioSource.clip = _audioClip;
     }
 
     public void OnNext(BaseEventData value)
     {
-        _audioSource.Play();
+        // マウスで操作しているかチェックする。マウスで選択した場合は音を鳴らさない。
+        try
+        {
+            var eventData = (PointerEventData)value;
+        }
+        catch (InvalidCastException e)
+        {
+            _audioSource.clip = _audioClip;
+            _audioSource.Play();
+        }   // キーボード OR コントローラーで操作している時
     }
 
     public void OnCompleted() {}

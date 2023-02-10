@@ -195,6 +195,21 @@ MonoBehaviour:
     m_StrikethroughThickness: 11.753906
     m_TabWidth: 502
   m_GlyphTable:
+  - m_Index: 65
+    m_Metrics:
+      m_Width: 0
+      m_Height: 0
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 0
+      m_HorizontalAdvance: 501.5
+    m_GlyphRect:
+      m_X: 454
+      m_Y: 392
+      m_Width: 1
+      m_Height: 1
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
   - m_Index: 2071
     m_Metrics:
       m_Width: 375.14062
@@ -257,6 +272,10 @@ MonoBehaviour:
     m_ClassDefinitionType: 0
   m_CharacterTable:
   - m_ElementType: 1
+    m_Unicode: 95
+    m_GlyphIndex: 65
+    m_Scale: 1
+  - m_ElementType: 1
     m_Unicode: 12452
     m_GlyphIndex: 2071
     m_Scale: 1
@@ -294,15 +313,15 @@ MonoBehaviour:
     m_Y: 0
     m_Width: 386
     m_Height: 386
+  - m_X: 448
+    m_Y: 386
+    m_Width: 12
+    m_Height: 12
   m_FreeGlyphRects:
   - m_X: 0
     m_Y: 1022
     m_Width: 1023
     m_Height: 1
-  - m_X: 448
-    m_Y: 386
-    m_Width: 575
-    m_Height: 125
   - m_X: 772
     m_Y: 386
     m_Width: 251
@@ -311,6 +330,14 @@ MonoBehaviour:
     m_Y: 0
     m_Width: 189
     m_Height: 1023
+  - m_X: 448
+    m_Y: 398
+    m_Width: 575
+    m_Height: 113
+  - m_X: 460
+    m_Y: 386
+    m_Width: 563
+    m_Height: 125
   m_fontInfo:
     Name: 
     PointSize: 0
@@ -355,7 +382,7 @@ MonoBehaviour:
     atlasWidth: 1024
     atlasHeight: 1024
     characterSetSelectionMode: 7
-    characterSequence: "\u30A6\u30A4\u30F3\u30C9"
+    characterSequence: "\u30A6\u30A4\u30F3\u30C9_"
     referencedFontAssetGUID: 
     referencedTextAssetGUID: 
     fontStyle: 0
