@@ -11,14 +11,14 @@ using UnityEngine.UI;
 /// </summary>
 public class WindowController : MonoBehaviour
 {
-    /// <summary>ボタンのプレハブ</summary>
+    [Tooltip("ボタンのプレハブ")]
     [SerializeField] Button _buttonPrefab;
-    /// <summary>ボタンを置くルートオブジェクト</summary>
+    [Tooltip("ボタンを置くルートオブジェクト")]
     [SerializeField] Transform _buttonRoot;
     [SerializeField] AudioSource _audio;
-    /// <summary>操作した時に鳴る音</summary>
+    [Tooltip("操作した時に鳴る音")]
     [SerializeField] AudioClip _selectSoundEffect;
-    /// <summary>操作した時に鳴る音</summary>
+    [Tooltip("操作した時に鳴る音")]
     [SerializeField] AudioClip _clickSoundEffect;
     /// <summary>最後にクリックされたボタン</summary>
     Button _lastClickedButton;

@@ -7,9 +7,9 @@ using UnityEngine;
 /// </summary>
 public class WindowManager : MonoBehaviour
 {
-    /// <summary>ウインドウのプレハブ</summary>
+    [Tooltip("ウインドウのプレハブ")]
     [SerializeField] WindowController _windowPrefab;
-    /// <summary>ウインドウのルートとなるオブジェクト</summary>
+    [Tooltip("ウインドウのルートとなるオブジェクト")]
     [SerializeField] Transform _windowRoot;
     /// <summary>表示されているウインドウを入れておくスタック</summary>
     Stack<WindowController> _windowStack = new Stack<WindowController>();
