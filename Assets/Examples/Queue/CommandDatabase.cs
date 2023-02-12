@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// コマンド一覧を提供するコンポーネント
+/// コマンド一覧を提供するクラス（シングルトン）
 /// コマンド一覧はテキスト (csv形式) として Resources/CommandDefinition.csv に定義し、データとして読み込む
 /// シングルトンなので、呼び出す時は CommandDatabase.Instance.CommandList と書いてコマンド一覧を取得する
 /// </summary>
