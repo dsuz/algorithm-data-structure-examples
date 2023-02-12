@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UniRx;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// コメント
+/// <summary>
+/// 入力キューを管理するコンポーネント
+/// </summary>
 public class FighterInput : MonoBehaviour
 {
     [Tooltip("コマンド入力の有効期間（秒）")]
@@ -13,9 +16,14 @@ public class FighterInput : MonoBehaviour
     [SerializeField] float _cleanupQueueInterval = 0.1f;
     Queue<InputData> _inputQueue = new Queue<InputData>();
     Coroutine _cleanupQueue;
+    FighterController _fighter;
 
     public Queue<InputData> InputQueue => _inputQueue;
 
+    /// <summary>
+    /// 方向入力をハンドルするメソッドとして Input System から呼ばれる
+    /// </summary>
+    /// <param name="context"></param>
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed) 
@@ -25,12 +33,89 @@ public class FighterInput : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 攻撃ボタンの入力をハンドルするメソッドとして Input System から呼ばれる
+    /// </summary>
+    /// <param name="context"></param>
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed)
         {
-            Debug.Log("Attack");
+            var command = CheckCommand();
+            InvokeFighter(command);
+            _inputQueue.Clear();
         }
+    }
+
+    /// <summary>
+    /// 引数で指定されたメソッド（引数なし）を FighterController クラスから呼び出す
+    /// </summary>
+    /// <param name="command"></param>
+    void InvokeFighter(string command)
+    {
+        if (!_fighter)
+            _fighter = FindFighter();
+
+        if (_fighter)
+        {
+            Type fighterType = _fighter.GetType();
+            MethodInfo mi = fighterType.GetMethod(command);
+
+            if (mi != null)
+                mi.Invoke(_fighter, null);
+            else
+                Debug.LogError($"コマンドで指定されているメソッド {command} が見つかりません。");
+        }
+        else
+            Debug.LogError($"{_fighter.GetType().Name} が見つかりません。");
+    }
+
+    /// <summary>
+    /// FighterController を見つける処理。
+    /// FighterController コンポーネントは Player タグをつけた GameObject に追加しておく必要がある
+    /// </summary>
+    /// <returns></returns>
+    FighterController FindFighter()
+    {
+        FighterController fighter = null;
+        GameObject go = GameObject.FindGameObjectWithTag("Player");
+
+        if (go)
+            fighter = go.GetComponent<FighterController>();
+
+        return fighter;
+    }
+
+    /// <summary>
+    /// 入力キューとコマンドリストを比較して、コマンドと一致しているか調べる
+    /// </summary>
+    /// <returns>一致したコマンドの名前</returns>
+    string CheckCommand()
+    {
+        string cmdString = "";
+        var cmdList = CommandDatabase.Instance.CommandList;
+        var inputArray = _inputQueue.ToArray();
+
+        foreach (var cmd in cmdList)
+        {
+            var cmdQueue = new Queue<Vector2>(cmd.Value);
+
+            for (int i = 0; i < inputArray.Length && cmdQueue.Count > 0; i++)
+            {
+                if (inputArray[i].Direction == cmdQueue.Peek())
+                {
+                    cmdQueue.Dequeue();
+                }
+            }
+
+            if (cmdQueue.Count == 0)
+            {
+                cmdString = cmd.Key;
+                break;
+            }   // コマンド成立
+        }
+
+        return cmdString;
     }
 
     /// <summary>
@@ -65,6 +150,11 @@ public class FighterInput : MonoBehaviour
     }
 }
 
+/// <summary>
+/// 入力キューのデータ型となるクラス
+/// 入力された方向と、いつ入力されたかを記録する
+/// 構造体にしたかったが、デフォルトコンストラクターの利用を禁止するためクラスとして作っている
+/// </summary>
 public class InputData
 {
     Vector2 _direction;
@@ -73,7 +163,7 @@ public class InputData
     public Vector2 Direction => _direction;
     public float Time => _time;
 
-    InputData() { }
+    private InputData() { } // デフォルトコンストラクターの利用を禁止している
 
     public InputData(Vector2 direction, float time)
     {
