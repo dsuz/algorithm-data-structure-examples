@@ -14,4 +14,9 @@ public class NodeController : MonoBehaviour
         this.ObserveEveryValueChanged(node => node.name)
             .Subscribe(name => _label.text = name);
     }
+
+    public void OnClick()
+    {
+        BFSManager.Instance.Search(int.Parse(name));
+    }
 }

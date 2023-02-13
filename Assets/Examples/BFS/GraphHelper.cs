@@ -17,13 +17,13 @@ public static class GraphHelper
     static bool[,] _adjacencyMatrix;
     static Dictionary<int, GameObject> _nodeDictionary = new Dictionary<int, GameObject>();
     static List<LineRenderer> _lines = new List<LineRenderer>();
-    static GameObject _playerObject;
+    static NodeTracer _player;
 
     public static bool[,] AdjacencyMatrix => _adjacencyMatrix;
     public static Dictionary<int, GameObject> NodeDictionary => _nodeDictionary;
 
     /// <summary>
-    /// ノードと辺のデータを全て削除する。
+    /// ノード・辺・プレイヤーのデータを全て削除する。
     /// </summary>
     static void Clear()
     {
@@ -32,6 +32,7 @@ public static class GraphHelper
         _nodeDictionary.Clear();
         _lines.ForEach(line => GameObject.Destroy(line.gameObject));
         _lines.Clear();
+        GameObject.DestroyImmediate(_player?.gameObject);
     }
 
     /// <summary>
@@ -40,7 +41,6 @@ public static class GraphHelper
     public static void LoadGraphData()
     {
         Clear();
-        GameObject.Destroy(_playerObject);
         var textAsset = Resources.Load<TextAsset>(_graphDataFilePath);
         var nodePrefab = Resources.Load<GameObject>(_nodePrefabFilePath);
 
@@ -70,10 +70,11 @@ public static class GraphHelper
                 _lines.Add(lineObject);
             }   // 辺のデータを読み込み、隣接行列に無向グラフとしてのデータを書き込む
 
+            // スタート地点に Player を置く
             var startNode = int.Parse(Tools.ReadLine(sr));
-            var playerPrefab = Resources.Load<GameObject>(_playerPrefabFilePath);
-            _playerObject = GameObject.Instantiate(playerPrefab);
-            _playerObject.transform.position = _nodeDictionary[startNode].transform.position;
+            var playerPrefab = Resources.Load<NodeTracer>(_playerPrefabFilePath);
+            _player = GameObject.Instantiate<NodeTracer>(playerPrefab);
+            BFSManager.Instance.CurrentNode = startNode;
         }
     }
 }

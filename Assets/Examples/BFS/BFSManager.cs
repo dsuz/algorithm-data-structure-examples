@@ -9,10 +9,27 @@ using UnityEngine;
 /// </summary>
 public class BFSManager : MonoBehaviour
 {
-    public int _currentNode = -1;
-    public int _targetNode = -1;
-    int[,] _routeMatrix;
+    [SerializeField] AudioClip _ngSound;
+    int _currentNode = -1;
+    int _targetNode = -1;
     int[] _routeArray;
+    NodeTracer _player;
+
+    public int CurrentNode
+    {
+        get => _currentNode;
+
+        set
+        {
+            _currentNode = value;
+            GetPlayer().Move(_currentNode);
+        }
+    }
+
+    public void Search(int targetNode)
+    {
+        Search(_currentNode, targetNode);
+    }
 
     public void Search()
     {
@@ -52,13 +69,15 @@ public class BFSManager : MonoBehaviour
         {
             Debug.Log("移動可");
             var routeArray = TraceRoute(currentNode, targetNode, _routeArray);
-            var go = GameObject.FindGameObjectWithTag("Player");
-            var nodeTracer = go.GetComponent<NodeTracer>();
-            nodeTracer.Move(routeArray);
+            GetPlayer().Move(routeArray);
+            _currentNode = targetNode;
         }
         else
         {
             Debug.Log("移動不可");
+
+            if (_ngSound)
+                AudioSource.PlayClipAtPoint(_ngSound, Camera.main.transform.position);
         }
     }
 
@@ -85,6 +104,68 @@ public class BFSManager : MonoBehaviour
         Debug.Log(string.Join(" > ", route));
         return route.ToArray();
     }
+
+    NodeTracer GetPlayer()
+    {
+        if (_player == null)
+        {
+            var go = GameObject.FindGameObjectWithTag("Player");
+            _player = go.GetComponent<NodeTracer>();
+
+            if (_player == null )
+            {
+                Debug.LogError($"プレイヤーが見つかりません。");
+            }
+        }
+
+        return _player;
+    }
+
+    #region シングルトンパターンのためのコード
+    /// <summary>シングルトンのインスタンスを保存しておく static 変数</summary>
+    static BFSManager instance;
+
+    public static BFSManager Instance
+    {
+        get
+        {
+            if (!instance)
+            {
+                SetupInstance();
+            }
+
+            return instance;
+        }
+    }
+
+    void Awake()
+    {
+        if (!instance)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    static void SetupInstance()
+    {
+        instance = FindObjectOfType<BFSManager>();
+
+        if (!instance)
+        {
+            GameObject go = new GameObject();
+            instance = go.AddComponent<BFSManager>();
+            go.name = instance.GetType().Name;
+            DontDestroyOnLoad(go);
+        }
+    }
+    #endregion
 }
 
 struct NodeInfo
