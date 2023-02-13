@@ -5,6 +5,7 @@
 1. リポジトリをクローンするか、zip をダウンロードして展開する
 2. プロジェクトを Unity で開く
 3. Asset Store から [Space Robot Kyle](https://assetstore.unity.com/packages/3d/characters/robots/4696) をプロジェクトにインポートする
+4. Asset Store から [DOTween](https://assetstore.unity.com/packages/tools/animation/27676) をプロジェクトにインポートし、指示に従って Setup する
 
 # サンプル
 
