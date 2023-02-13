@@ -167,8 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbbbdba37ce131c49bef189a7135cc02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentNode: 0
-  _targetNode: 6
+  _ngSound: {fileID: 8300000, guid: b8d6196ec1e0ab640ad6440082991bf7, type: 3}
 --- !u!1 &505260291
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,6 +407,7 @@ GameObject:
   - component: {fileID: 943280164}
   - component: {fileID: 943280163}
   - component: {fileID: 943280166}
+  - component: {fileID: 943280167}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -514,6 +514,22 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &943280167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943280162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1 &1087816175
 GameObject:
   m_ObjectHideFlags: 0
