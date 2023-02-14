@@ -9,6 +9,6 @@ public class Test : MonoBehaviour
 {
     public void Do()
     {
-        GraphHelper.LoadGraphData();
+        BFSGraphHelper.LoadGraphData();
     }
 }

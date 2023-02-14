@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 210321186}
   - component: {fileID: 210321187}
+  - component: {fileID: 210321188}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -168,6 +169,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ngSound: {fileID: 8300000, guid: b8d6196ec1e0ab640ad6440082991bf7, type: 3}
+--- !u!114 &210321188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210321185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb3d228ef122144fa7e0098ea3ddff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _graphDataFilePath: BFSGraphData
+  _nodePrefabFilePath: BFSNode
+  _edgePrefabFilePath: BFSEdgeLine
+  _playerPrefabFilePath: BFSPlayer
 --- !u!1 &505260291
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,9 +282,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 505260293}
-        m_TargetAssemblyTypeName: Test, Assembly-CSharp
-        m_MethodName: Do
+      - m_Target: {fileID: 210321188}
+        m_TargetAssemblyTypeName: BFSGraphLoader, Assembly-CSharp
+        m_MethodName: LoadGraphData
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

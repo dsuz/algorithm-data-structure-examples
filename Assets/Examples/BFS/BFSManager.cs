@@ -2,18 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 /// <summary>
 /// 参考: 以下のページの「動的計画法の最適解を復元する 2 つの方法」> 「方法 2： 汎用的に使える良い方法」
 /// https://qiita.com/drken/items/0c7bab0384438f285f93
 /// </summary>
-public class BFSManager : MonoBehaviour
+public class BFSManager : SingletonMonoBehaviour<BFSManager>
 {
     [SerializeField] AudioClip _ngSound;
     int _currentNode = -1;
     int _targetNode = -1;
     int[] _routeArray;
-    NodeTracer _player;
+    BFSNodeTracer _player;
 
     public int CurrentNode
     {
@@ -38,8 +37,8 @@ public class BFSManager : MonoBehaviour
 
     public void Search(int currentNode, int targetNode)
     {
-        var adjMatrix = GraphHelper.AdjacencyMatrix;
-        int n = GraphHelper.NodeDictionary.Count;
+        var adjMatrix = BFSGraphLoader.Instance.AdjacencyMatrix;
+        int n = BFSGraphLoader.Instance.NodeDictionary.Count;
         Queue<NodeInfo> queue = new Queue<NodeInfo>();
         queue.Enqueue(new NodeInfo(currentNode, -1));
         _routeArray = Enumerable.Repeat<int>(int.MinValue, n).ToArray();
@@ -105,12 +104,12 @@ public class BFSManager : MonoBehaviour
         return route.ToArray();
     }
 
-    NodeTracer GetPlayer()
+    BFSNodeTracer GetPlayer()
     {
         if (_player == null)
         {
             var go = GameObject.FindGameObjectWithTag("Player");
-            _player = go.GetComponent<NodeTracer>();
+            _player = go.GetComponent<BFSNodeTracer>();
 
             if (_player == null )
             {
@@ -120,52 +119,6 @@ public class BFSManager : MonoBehaviour
 
         return _player;
     }
-
-    #region シングルトンパターンのためのコード
-    /// <summary>シングルトンのインスタンスを保存しておく static 変数</summary>
-    static BFSManager instance;
-
-    public static BFSManager Instance
-    {
-        get
-        {
-            if (!instance)
-            {
-                SetupInstance();
-            }
-
-            return instance;
-        }
-    }
-
-    void Awake()
-    {
-        if (!instance)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    static void SetupInstance()
-    {
-        instance = FindObjectOfType<BFSManager>();
-
-        if (!instance)
-        {
-            GameObject go = new GameObject();
-            instance = go.AddComponent<BFSManager>();
-            go.name = instance.GetType().Name;
-            DontDestroyOnLoad(go);
-        }
-    }
-    #endregion
 }
 
 struct NodeInfo

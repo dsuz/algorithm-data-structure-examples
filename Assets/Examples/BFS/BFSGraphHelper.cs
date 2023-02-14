@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// ドキュメントコメント
 /// </summary>
-public static class GraphHelper
+public static class BFSGraphHelper
 {
     static string _graphDataFilePath = "GraphData";
     static string _nodePrefabFilePath = "Node";
@@ -17,10 +16,10 @@ public static class GraphHelper
     static bool[,] _adjacencyMatrix;
     static Dictionary<int, GameObject> _nodeDictionary = new Dictionary<int, GameObject>();
     static List<LineRenderer> _lines = new List<LineRenderer>();
-    static NodeTracer _player;
+    static BFSNodeTracer _player;
+    
 
     public static bool[,] AdjacencyMatrix => _adjacencyMatrix;
-    public static Dictionary<int, GameObject> NodeDictionary => _nodeDictionary;
 
     /// <summary>
     /// ノード・辺・プレイヤーのデータを全て削除する。
@@ -72,8 +71,8 @@ public static class GraphHelper
 
             // スタート地点に Player を置く
             var startNode = int.Parse(Tools.ReadLine(sr));
-            var playerPrefab = Resources.Load<NodeTracer>(_playerPrefabFilePath);
-            _player = GameObject.Instantiate<NodeTracer>(playerPrefab);
+            var playerPrefab = Resources.Load<BFSNodeTracer>(_playerPrefabFilePath);
+            _player = GameObject.Instantiate<BFSNodeTracer>(playerPrefab);
             BFSManager.Instance.CurrentNode = startNode;
         }
     }
