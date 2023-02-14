@@ -1,30 +1,45 @@
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 /// <summary>
-/// ドキュメントコメント
+/// ノード間を移動する機能を提供するコンポーネント
 /// </summary>
 public class BFSNodeTracer : MonoBehaviour
 {
+    [Tooltip("ノード間をアニメーションで移動する時にかかる時間（秒）")]
     [SerializeField] float _secondsBetweenNodes = 1f;
 
+    /// <summary>
+    /// 指定されたノードにワープする。
+    /// 現在のノードと指定されたノードがつながっていなくても関係なくワープする。
+    /// </summary>
+    /// <param name="nodeId"></param>
     public void Move(int nodeId)
     {
-        var nodeDic = BFSGraphLoader.Instance.NodeDictionary;
-        transform.position = nodeDic[nodeId].transform.position;
+        var nodePositions = BFSGraphLoader.Instance.NodePositions;
+        transform.position = nodePositions[nodeId];
     }
 
-    public void Move(int[] nodeIds)
+    /// <summary>
+    /// 配列として渡されたノードを順番に移動する。
+    /// DOTween を使ってアニメーションで移動する。
+    /// </summary>
+    /// <param name="nodeIds">ノードIDが格納された配列。配列の順番にノードを移動する。</param>
+    /// <param name="callback">移動が完了した時に実行するコールバック</param>
+    public void Move(int[] nodeIds, Action callback)
     {
         Sequence seq = DOTween.Sequence();
-        var nodeDic = BFSGraphLoader.Instance.NodeDictionary;
+        var nodePositions = BFSGraphLoader.Instance.NodePositions;
 
         for (int i = 1; i < nodeIds.Length; i++)
         {
             int nodeId = nodeIds[i];
-            var nextPos = nodeDic[nodeId].transform.position;
+            var nextPos = nodePositions[nodeId];
             seq.Append(transform.DOMove(nextPos, _secondsBetweenNodes)
                 .SetEase(Ease.Linear));
         }
+
+        seq.OnComplete(new TweenCallback(callback));
     }
 }

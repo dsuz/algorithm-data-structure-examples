@@ -1,16 +1,19 @@
-using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// ドキュメントコメント
+/// ノードの機能を提供するコンポーネント
 /// </summary>
 public class BFSNodeController : MonoBehaviour
 {
     [SerializeField] Text _label;
     int _nodeId;
 
+    /// <summary>
+    /// ノード番号。
+    /// ノード番号を代入すると、ラベルの数字がノード番号に変わる。
+    /// </summary>
     public int NodeId
     {
         get => _nodeId;
@@ -22,6 +25,10 @@ public class BFSNodeController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// クリックされた時の挙動を記述する
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnClick(BaseEventData eventData)
     {
         var ped = (PointerEventData) eventData;
@@ -33,6 +40,6 @@ public class BFSNodeController : MonoBehaviour
         else
         {
             BFSManager.Instance.CurrentNode = _nodeId;
-        }   // 右（中）クリックならば探索せずにワープする
+        }   // 右（中）クリックならば探索せずプレイヤーがそのノードにワープする
     }
 }

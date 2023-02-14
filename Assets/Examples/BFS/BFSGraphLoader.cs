@@ -33,13 +33,27 @@ public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
     /// グラフの隣接行列（無向）
     /// </summary>
     public bool[,] AdjacencyMatrix => _adjacencyMatrix;
+    
     /// <summary>
-    /// グラフのノード情報
+    /// [キー: ノード番号, 値: ノードの座標] を格納した Dictionary
     /// </summary>
-    public Dictionary<int, BFSNodeController> NodeDictionary => _nodeDictionary;   // TODO: 提供したいデータはノードの座標とノードの個数だけなので、それ以外の情報を隠す
+    public Dictionary<int, Vector2> NodePositions
+    {
+        get
+        {
+            Dictionary<int, Vector2> nodePositions = new Dictionary<int, Vector2>();
+            
+            foreach (var kv in _nodeDictionary)
+            {
+                nodePositions.Add(kv.Key, kv.Value.transform.position);
+            }
+
+            return nodePositions;
+        }
+    }
 
     /// <summary>
-    /// ノード・辺・プレイヤーのデータを全て削除する。
+    /// ノード・辺のデータを全て削除する。
     /// </summary>
     void Clear()
     {
@@ -48,9 +62,6 @@ public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
         _nodeDictionary.Clear();
         _lines.ForEach(line => Destroy(line.gameObject));
         _lines.Clear();
-
-        if (_player)
-            DestroyImmediate(_player);   // TODO: Immediate でなくしたい
     }
 
     /// <summary>
@@ -88,11 +99,12 @@ public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
                 lineObject.SetPosition(1, _nodeDictionary[edge[1]].transform.position);
                 lineObject.name = $"{_edgePrefabFilePath} {i}";
                 _lines.Add(lineObject);
-            }   // 辺のデータを読み込み、隣接行列にデータを書き込む
+            }   // 辺のデータを読み込み、隣接行列にデータを書き込み、Line のプレハブを設定して並べる
 
             // スタート地点に Player を置く
             var startNode = int.Parse(Tools.ReadLine(sr));
-            _player = Instantiate(playerPrefab);
+            if (!_player)
+                _player = Instantiate(playerPrefab);
             BFSManager.Instance.CurrentNode = startNode;
         }
     }
