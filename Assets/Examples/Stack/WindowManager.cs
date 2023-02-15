@@ -3,9 +3,9 @@ using UnityEngine;
 
 /// <summary>
 /// スタックでウインドウを管理するコンポーネント
-/// シングルトンパターンである
+/// シングルトンパターンのコンポーネントとして作ってある
 /// </summary>
-public class WindowManager : MonoBehaviour
+public class WindowManager : SingletonMonoBehaviour<WindowManager>
 {
     [Tooltip("ウインドウのプレハブ")]
     [SerializeField] WindowController _windowPrefab;
@@ -65,50 +65,4 @@ public class WindowManager : MonoBehaviour
             _windowStack.Push(window);
         }
     }
-
-    #region シングルトンパターンのためのコード
-    /// <summary>シングルトンのインスタンスを保存しておく static 変数</summary>
-    static WindowManager instance;
-
-    public static WindowManager Instance
-    {
-        get
-        {
-            if (!instance)
-            {
-                SetupInstance();
-            }
-
-            return instance;
-        }
-    }
-
-    void Awake()
-    {
-        if (!instance)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    static void SetupInstance()
-    {
-        instance = FindObjectOfType<WindowManager>();
-
-        if (!instance)
-        {
-            GameObject go = new GameObject();
-            instance = go.AddComponent<WindowManager>();
-            go.name = instance.GetType().Name;
-            DontDestroyOnLoad(go);
-        }
-    }
-    #endregion
 }
