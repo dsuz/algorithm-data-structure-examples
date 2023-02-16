@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 
 /// <summary>
 /// 入力キューの内容を画面に表示するコンポーネント
@@ -23,11 +22,14 @@ public class InputQueueDisplay : MonoBehaviour
     [Tooltip("画像の色")]
     [SerializeField] Color _arrowColor = Color.red;
 
-    void Start()
+    void OnEnable()
     {
-        // 入力キューの要素数が変わったことを検出したら表示を更新する
-        _input.InputQueue.ObserveEveryValueChanged(queue => queue.Count)
-            .Subscribe(_ => UpdateQueueDisplay(_input.InputQueue.ToArray()));
+        _input.OnQueueUpdate += UpdateQueueDisplay;
+    }
+
+    void OnDisable()
+    {
+        _input.OnQueueUpdate -= UpdateQueueDisplay;
     }
 
     /// <summary>

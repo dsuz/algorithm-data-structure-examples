@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,11 +14,25 @@ public class FighterInput : MonoBehaviour
     [SerializeField] float _timeInQueue = 0.3f;
     [Tooltip("入力キューをクリーンアップする間隔（秒）")]
     [SerializeField] float _cleanupQueueInterval = 0.1f;
-    Queue<InputData> _inputQueue = new Queue<InputData>();
-    Coroutine _cleanupQueue;
+    [Tooltip("入力キューの容量")]
+    [SerializeField] int _queueCapacity = 20;
+    Queue<InputData> _inputQueue = null;
     FighterController _fighter;
+    Action<InputData[]> _onQueueUpdate;
 
-    public Queue<InputData> InputQueue => _inputQueue;
+    /// <summary>
+    /// キューに新たな入力が追加された
+    /// </summary>
+    public event Action<InputData[]> OnQueueUpdate
+    {
+        add => _onQueueUpdate += value;
+        remove => _onQueueUpdate -= value;
+    }
+
+    void Awake()
+    {
+        _inputQueue = new Queue<InputData>(_queueCapacity);
+    }
 
     /// <summary>
     /// 方向入力をハンドルするメソッドとして Input System から呼ばれる
@@ -29,7 +43,12 @@ public class FighterInput : MonoBehaviour
         if (context.phase == InputActionPhase.Performed) 
         {
             InputData inputData = new InputData(context.ReadValue<Vector2>(), Time.timeSinceLevelLoad);
+
+            if (_inputQueue.Count > _queueCapacity)
+                _inputQueue.Dequeue();
+
             _inputQueue.Enqueue(inputData);
+            _onQueueUpdate.Invoke(_inputQueue.ToArray());
         }
     }
 
@@ -44,6 +63,7 @@ public class FighterInput : MonoBehaviour
             var command = CheckCommand();
             InvokeFighter(command);
             _inputQueue.Clear();
+            _onQueueUpdate.Invoke(_inputQueue.ToArray());
         }
     }
 
@@ -94,7 +114,7 @@ public class FighterInput : MonoBehaviour
     {
         string cmdString = "";
         var cmdList = CommandDatabase.Instance.CommandList;
-        var inputArray = _inputQueue.ToArray();
+        var inputArray = _inputQueue.Where(inputData => inputData.Time + _timeInQueue > Time.timeSinceLevelLoad).ToArray(); // 有効期間内の入力のみを取り出す
 
         foreach (var cmd in cmdList)
         {
@@ -116,37 +136,6 @@ public class FighterInput : MonoBehaviour
         }
 
         return cmdString;
-    }
-
-    /// <summary>
-    /// 有効期限の切れた入力をキューから削除する
-    /// </summary>
-    IEnumerator CleanUpInputQueue()
-    {
-        while (true)
-        {
-            while (_inputQueue.Count > 0)
-            {
-                if (_inputQueue.Peek().Time + _timeInQueue < Time.timeSinceLevelLoad)
-                {
-                    _inputQueue.Dequeue();
-                }
-                else
-                    break;
-            }
-
-            yield return new WaitForSeconds(_cleanupQueueInterval);
-        }
-    }
-
-    void OnEnable()
-    {
-        _cleanupQueue = StartCoroutine(CleanUpInputQueue());
-    }
-
-    void OnDisable()
-    {
-        StopCoroutine(_cleanupQueue);
     }
 }
 

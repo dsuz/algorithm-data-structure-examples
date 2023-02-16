@@ -286,7 +286,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275494017}
   m_LocalRotation: {x: 0.06516967, y: 0.0073537338, z: -0.00048027452, w: 0.997847}
-  m_LocalPosition: {x: 0.83090967, y: 1.2579296, z: -1.4991494}
+  m_LocalPosition: {x: 0.83247024, y: 1.2579296, z: -1.4991724}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1272,7 +1272,7 @@ MonoBehaviour:
   m_ChildAlignment: 3
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 40, y: 40}
+  m_CellSize: {x: 30, y: 30}
   m_Spacing: {x: 5, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
@@ -1360,7 +1360,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857735727}
   m_LocalRotation: {x: 0.06516967, y: 0.0073537338, z: -0.00048027452, w: 0.997847}
-  m_LocalPosition: {x: 0.83090967, y: 1.2579296, z: -1.4991494}
+  m_LocalPosition: {x: 0.83247024, y: 1.2579296, z: -1.4991724}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1675,3 +1675,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _timeInQueue: 0.8
   _cleanupQueueInterval: 0.2
+  _queueCapacity: 20
