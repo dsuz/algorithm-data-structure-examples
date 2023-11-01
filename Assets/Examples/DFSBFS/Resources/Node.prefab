@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 3183373749357537232}
   - component: {fileID: 1439793720888021357}
   m_Layer: 0
-  m_Name: BFSNode
+  m_Name: Node
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

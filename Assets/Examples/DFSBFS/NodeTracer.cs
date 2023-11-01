@@ -5,7 +5,7 @@ using System;
 /// <summary>
 /// ノード間を移動する機能を提供するコンポーネント
 /// </summary>
-public class BFSNodeTracer : MonoBehaviour
+public class NodeTracer : MonoBehaviour
 {
     [Tooltip("ノード間をアニメーションで移動する時にかかる時間（秒）")]
     [SerializeField] float _secondsBetweenNodes = 1f;
@@ -17,7 +17,7 @@ public class BFSNodeTracer : MonoBehaviour
     /// <param name="nodeId"></param>
     public void Move(int nodeId)
     {
-        var nodePositions = BFSGraphLoader.Instance.NodePositions;
+        var nodePositions = GraphLoader.Instance.NodePositions;
         transform.position = nodePositions[nodeId];
     }
 
@@ -30,7 +30,7 @@ public class BFSNodeTracer : MonoBehaviour
     public void Move(int[] nodeIds, Action callback)
     {
         Sequence seq = DOTween.Sequence();
-        var nodePositions = BFSGraphLoader.Instance.NodePositions;
+        var nodePositions = GraphLoader.Instance.NodePositions;
 
         for (int i = 1; i < nodeIds.Length; i++)
         {

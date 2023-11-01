@@ -10,20 +10,20 @@ using UnityEngine;
 /// 3. グラフのノード情報のデータを保持し、提供する
 /// パスは Resources フォルダからのパスで指定することに注意すること
 /// </summary>
-public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
+public class GraphLoader : SingletonMonoBehaviour<GraphLoader>
 {
     /// <summary>グラフのデータが入っているテキストアセットのパス</summary>
-    [SerializeField] string _graphDataFilePath = "BFSGraphData";
+    [SerializeField] string _graphDataFilePath = "GraphData";
     /// <summary>ノードオブジェクトのプレハブのパス</summary>
-    [SerializeField] string _nodePrefabFilePath = "BFSNode";
+    [SerializeField] string _nodePrefabFilePath = "Node";
     /// <summary>辺 (LineRenderer) のプレハブのパス</summary>
-    [SerializeField] string _edgePrefabFilePath = "BFSEdgeLine";
+    [SerializeField] string _edgePrefabFilePath = "EdgeLine";
     /// <summary>プレイヤーのプレハブのパス</summary>
-    [SerializeField] string _playerPrefabFilePath = "BFSPlayer";
+    [SerializeField] string _playerPrefabFilePath = "Player";
     /// <summary>隣接行列（無向）</summary>
     bool[,] _adjacencyMatrix;
     /// <summary>ノードオブジェクトのキャッシュ</summary>
-    Dictionary<int, BFSNodeController> _nodeDictionary = new Dictionary<int, BFSNodeController>();
+    Dictionary<int, NodeController> _nodeDictionary = new Dictionary<int, NodeController>();
     /// <summary>辺オブジェクトのキャッシュ</summary>
     List<LineRenderer> _lines = new List<LineRenderer>();
     /// <summary>プレイヤーオブジェクトのキャッシュ</summary>
@@ -71,7 +71,7 @@ public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
     {
         Clear();
         var textAsset = Resources.Load(_graphDataFilePath) as TextAsset;    // グラフデータが入っているテキストファイル
-        var nodePrefab = Resources.Load<BFSNodeController>(_nodePrefabFilePath);
+        var nodePrefab = Resources.Load<NodeController>(_nodePrefabFilePath);
         var linePrefab = Resources.Load<LineRenderer>(_edgePrefabFilePath);
         var playerPrefab = Resources.Load(_playerPrefabFilePath) as GameObject;
 
@@ -105,7 +105,7 @@ public class BFSGraphLoader : SingletonMonoBehaviour<BFSGraphLoader>
             var startNode = int.Parse(Tools.ReadLine(sr));
             if (!_player)
                 _player = Instantiate(playerPrefab);
-            BFSManager.Instance.CurrentNode = startNode;
+            SearchManager.Instance.CurrentNode = startNode;
         }
     }
 }

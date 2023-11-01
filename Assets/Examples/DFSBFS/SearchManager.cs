@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.LookDev;
 
 /// <summary>
 /// 幅優先探索を使って無効グラフから経路を探索し、経路を見つける機能を提供するコンポーネント。
 /// 探索に成功してから経路を復元する方法は以下のページの「動的計画法の最適解を復元する 2 つの方法」> 「方法 2： 汎用的に使える良い方法」のやり方を参考にした。
 /// https://qiita.com/drken/items/0c7bab0384438f285f93
 /// </summary>
-public class BFSManager : SingletonMonoBehaviour<BFSManager>
+public class SearchManager : SingletonMonoBehaviour<SearchManager>
 {
     [Tooltip("移動不可の時に鳴らす音")]
     [SerializeField] AudioClip _ngSound;
     /// <summary>現在いるノード（探索開始ノード）</summary>
     int _currentNode;
     /// <summary>プレイヤーオブジェクトのキャッシュ</summary>
-    BFSNodeTracer _player;
+    NodeTracer _player;
     /// <summary>ノード間移動中フラグ。アニメーション再生中は true にする。true の時は外部からの呼び出しを受け付けない。</summary>
     bool _isTweening = false;
 
@@ -42,7 +43,7 @@ public class BFSManager : SingletonMonoBehaviour<BFSManager>
                 if (!_player)
                 {
                     var go = GameObject.FindGameObjectWithTag("Player");
-                    _player = go.GetComponent<BFSNodeTracer>();
+                    _player = go.GetComponent<NodeTracer>();
                 }
 
                 if (_player)
@@ -57,7 +58,8 @@ public class BFSManager : SingletonMonoBehaviour<BFSManager>
     /// 経路を探索する
     /// </summary>
     /// <param name="targetNode">目標ノードのノード番号</param>
-    public void Search(int targetNode)
+    /// <param name="searchMethod">探索方法</param>
+    public void Search(int targetNode, SearchMethod searchMethod)
     {
         if (_isTweening)
         {
@@ -66,8 +68,76 @@ public class BFSManager : SingletonMonoBehaviour<BFSManager>
             if (_ngSound)
                 AudioSource.PlayClipAtPoint(_ngSound, Camera.main.transform.position);
         }
+        else if (searchMethod == SearchMethod.DFS)
+        {
+            DFSSearch(CurrentNode, targetNode);
+        }
+        else if (searchMethod == SearchMethod.BFS)
+        {
+            BFSSearch(_currentNode, targetNode);
+        }
+    }
+
+    /// <summary>
+    /// 深さ優先探索で経路を探索する
+    /// </summary>
+    /// <param name="currentNode">現在のノード</param>
+    /// <param name="targetNode">目標のノード</param>
+    void DFSSearch(int currentNode, int targetNode)
+    {
+        var adjMatrix = GraphLoader.Instance.AdjacencyMatrix;    // 隣接行列
+        var stack = new Stack<int>();
+        stack.Push(currentNode);
+        int[] route = null;
+        DFSSearchRecursive(stack, adjMatrix, targetNode, ref route);
+        
+        if (route == null)
+        {
+            print("ルートが見つかりませんでした。");
+
+            if (_ngSound)
+                AudioSource.PlayClipAtPoint(_ngSound, Camera.main.transform.position);
+        }
         else
-            Search(_currentNode, targetNode);
+        {
+            _isTweening = true;
+            _player.Move(route, () => _isTweening = false);
+        }   // 経路を移動する
+    }
+
+    /// <summary>
+    /// 深さ優先探索で経路探索を行う（再起呼び出しの部分）
+    /// </summary>
+    /// <param name="stack">探索中ルートが入ったスタック</param>
+    /// <param name="adjMatrix">隣接行列</param>
+    /// <param name="targetNode">目標のノード</param>
+    /// <param name="route">ゴールへの経路を受け取る変数</param>
+    void DFSSearchRecursive(Stack<int> stack, bool[,] adjMatrix, int targetNode, ref int[] route)
+    {
+        var currentNode = stack.Peek();
+        var n = adjMatrix.GetLength(0); // ノード数
+
+        for (int i = 0; i < n; i++)
+        {
+            if (adjMatrix[currentNode, i] && !stack.Contains(i) && (route == null || !route.Contains(targetNode)))
+            {
+                stack.Push(i);
+                print($"探索中: {string.Join('>', stack.Reverse())}");
+
+                if (i == targetNode)
+                {
+                    _currentNode = i;
+                    route = stack.Reverse().ToArray();
+                    print($"ゴールに着いた。ルートは {string.Join('>', route)}");
+                    break;
+                }   // ゴールについた
+                else
+                {
+                    DFSSearchRecursive(stack, adjMatrix, targetNode, ref route);
+                    stack.Pop();
+                }   // 次のノードに移動する
+            }   // 該当ノードに移動でき、かつ該当ノードが未訪問（かつまだゴールに着いてない）の場合
+        }   // 次のノードを探す
     }
 
     /// <summary>
@@ -75,9 +145,9 @@ public class BFSManager : SingletonMonoBehaviour<BFSManager>
     /// </summary>
     /// <param name="currentNode">探索を開始するノード</param>
     /// <param name="targetNode">目標地点となるノード</param>
-    void Search(int currentNode, int targetNode)
+    void BFSSearch(int currentNode, int targetNode)
     {
-        var adjMatrix = BFSGraphLoader.Instance.AdjacencyMatrix;    // 隣接行列
+        var adjMatrix = GraphLoader.Instance.AdjacencyMatrix;    // 隣接行列
         int n = adjMatrix.GetLength(0); // ノードの数
         Queue<NodeInfo> queue = new Queue<NodeInfo>();  // 幅優先探索に使うキュー
         queue.Enqueue(new NodeInfo(currentNode, -1));   // 探索を開始するノードの情報をまずキューに入れる。-1 は「どのノードからも来ていない」ことを意味する。
@@ -160,4 +230,13 @@ struct NodeInfo
         this.NodeId = nodeId;
         this.FromNodeId = fromNodeId;
     }
+}
+
+/// <summary>
+/// 探索メソッドの名前を定義する
+/// </summary>
+public enum SearchMethod
+{
+    BFS,
+    DFS,
 }

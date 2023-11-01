@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 194689675916870848}
   - component: {fileID: 208632225785332794}
   m_Layer: 0
-  m_Name: BFSPlayer
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5576221696761495628}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dd822e018f966943a1b7ffe8eaeb969, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c8f55c1229c8df45947f5fd5f158537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _secondsBetweenNodes: 1
