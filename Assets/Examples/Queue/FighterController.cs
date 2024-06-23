@@ -5,30 +5,30 @@ using UnityEngine;
 /// </summary>
 public class FighterController : MonoBehaviour
 {
-    Animator _anim;
+    [SerializeField] Animator _animator;
 
     void Start()
     {
-        _anim = GetComponent<Animator>();
+        
     }
 
     void FixedUpdate()
     {
-        _anim.SetInteger("AttackPattern", 0);
+        _animator.SetInteger("AttackPattern", 0);
     }
 
     public void NormalAttack()
     {
-        _anim.SetInteger("AttackPattern", 1);
+        _animator.SetInteger("AttackPattern", 1);
     }
 
     public void BigAttack()
     {
-        _anim.SetInteger("AttackPattern", 2);
+        _animator.SetInteger("AttackPattern", 2);
     }
 
     public void QuickAttack()
     {
-        _anim.SetInteger("AttackPattern", 3);
+        _animator.SetInteger("AttackPattern", 3);
     }
 }
