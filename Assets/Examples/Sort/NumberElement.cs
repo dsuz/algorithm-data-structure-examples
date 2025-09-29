@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// ”š‚ğ‰æ–Ê‚É•\¦‚·‚é
+/// </summary>
 public class NumberElement : MonoBehaviour
 {
     [SerializeField] private Text _text;
 
     public int Value {
         get => int.Parse(_text.text);
-        set => _text.text = value.ToString();
+        set => _text.text = value.ToString("000");
     }
 
     public Vector2 Position {
